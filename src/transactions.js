@@ -1,27 +1,45 @@
-export async function postTransactions (req, res) {
 
-    const { value, description, type } = req.body;
-    
-    const transactionSchema = Joi.object({
-        value: Joi.number().positive().required(),
-        description: Joi.string().required(),
-        type: Joi.string().valid("deposit", "withdraw").required()
-    });
-    
-    const validacao = transactionSchema.validate({ value, description, type }, { abortEarly: false });
-    if (validacao.error) {
-        const mensagens = validacao.error.details.map(detail => detail.message);
-        return res.status(422).send(mensagens);
+import Joi from "joi";
+
+import { db } from "./database.js";
+
+export async function postTransactions(req, res) {
+    const { authorization } = req.headers;
+    const token = authorization?.replace("Bearer ", "").trim();
+
+    if (!token) {
+        return res.status(401).send("Token não fornecido");
     }
-    
+
     try {
+        const sessao = await db.collection("sessoes").findOne({ token });
+
+        if (!sessao) {
+            return res.status(401).send("Sessão inválida");
+        }
+
+        const { value, description, type } = req.body;
+
+        const transactionSchema = Joi.object({
+            value: Joi.number().positive().required(),
+            description: Joi.string().required(),
+            type: Joi.string().valid("deposit", "withdraw").required()
+        });
+
+        const validacao = transactionSchema.validate({ value, description, type }, { abortEarly: false });
+        if (validacao.error) {
+            const mensagens = validacao.error.details.map(detail => detail.message);
+            return res.status(422).send(mensagens);
+        }
+
         const novaTransacao = {
+            userId: sessao.userId, // Associa a transação ao usuário logado
             value,
             description,
             type,
-            date: new Date() 
+            date: new Date()
         };
-    
+
         await db.collection("transactions").insertOne(novaTransacao);
         res.status(201).send("Transação registrada com sucesso!");
     } catch (error) {
