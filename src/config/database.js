@@ -16,3 +16,4 @@ try {
 }
 
 export const db = mongoClient.db();
+

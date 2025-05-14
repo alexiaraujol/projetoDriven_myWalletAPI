@@ -1,20 +1,18 @@
 
-import Joi from "joi";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
 
-import { db } from "./database.js";
+
+import { usuarioLoginSchema, usuarioSchema } from "../schema/authschema.js";
+import { db } from "../config/database.js";
+
 
 
 export async function signUp (req, res)  {
     //pegar as infs do usuario 
     const usuario = req.body;
     //validar as infs
-    const usuarioSchema = Joi.object({
-        name: Joi.string().required(),
-        email: Joi.string().email().required(),
-        password: Joi.string().min(6).required()
-    });
+
 
     const validacao = usuarioSchema.validate(usuario, { abortEarly: false })
     if (validacao.error) {
@@ -45,10 +43,7 @@ export async function singnIn (req, res)  {
 
     const usuario = req.body;
 
-    const usuarioLoginSchema = Joi.object({
-        email: Joi.string().email().required(),
-        password: Joi.string().required()
-    });
+
 
     const validacao = usuarioLoginSchema.validate(usuario, { abortEarly: false })
     if (validacao.error) {
