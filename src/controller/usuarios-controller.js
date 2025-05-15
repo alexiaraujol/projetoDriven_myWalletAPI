@@ -14,13 +14,6 @@ export async function signUp (req, res)  {
     //validar as infs
 
 
-    const validacao = usuarioSchema.validate(usuario, { abortEarly: false })
-    if (validacao.error) {
-        const mensagens = validacao.error.details.map(detail => detail.message);
-
-        return res.status(422).send(mensagens);
-
-    }
 
     //salvar no banco 
     try {
@@ -44,12 +37,6 @@ export async function singnIn (req, res)  {
     const usuario = req.body;
 
 
-
-    const validacao = usuarioLoginSchema.validate(usuario, { abortEarly: false })
-    if (validacao.error) {
-        const mensagens = validacao.error.details.map(detail => detail.message);
-        return res.status(422).send(mensagens);
-    }
 
 
     try {
