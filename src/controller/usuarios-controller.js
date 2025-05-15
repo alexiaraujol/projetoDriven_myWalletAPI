@@ -1,9 +1,9 @@
 
 import bcrypt from "bcrypt";
-import { v4 as uuidv4 } from 'uuid';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
-
-import { usuarioLoginSchema, usuarioSchema } from "../schema/authschema.js";
 import { db } from "../config/database.js";
 
 
@@ -52,14 +52,10 @@ export async function singnIn (req, res)  {
         if (usuarioCadastrado && bcrypt.compareSync(usuario.password, usuarioCadastrado.password)) {
             console.log("Usuario logado com sucesso!!")
 
-            const token = uuidv4();
-
-            const sessao = {
-                token,
-                userId: usuarioCadastrado._id
-            };
-
-            await db.collection("sessoes").insertOne(sessao);
+            const token = jwt.sign(
+                {userId:usuarioCadastrado._id},
+                 process.env.JWT_SECRET,
+                { expiresIn:86400 });
 
             return res.send(token);
         }

@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb";
-import { transactionSchema } from "../schema/transactions.js";
 import { db } from "../config/database.js";
 
 export async function postTransactions(req, res) {
