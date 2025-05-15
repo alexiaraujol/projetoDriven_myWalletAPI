@@ -8,10 +8,9 @@ export async function postTransactions(req, res) {
 
         const novaTransacao = {
             userId: req.userId, 
-            value,
             description,
             type,
-            date: new Date()
+            date: new Date(),
         };
 
         await db.collection("transactions").insertOne(novaTransacao);
@@ -23,8 +22,20 @@ export async function postTransactions(req, res) {
 }
 
 export async function getTransactions(req, res) {
+
+    const pagina = req.query.pagina || 1;
+    const limite = 10
+    const inicio = (pagina - 1) * limite;
+
+
+
     try {
-        const transactions = await db.collection("transactions").find({ userId: req.userId }).toArray();
+        const transactions = await db.collection("transactions")
+        .find({ userId: req.userId })
+        .skip(inicio)
+        .limit(limite)
+        .sort({ date: -1 }) // Ordena por data, do mais recente para o mais antigo
+        .toArray();
 
         if (!transactions || transactions.length === 0) {
             return res.status(404).send("Transações não encontradas");
