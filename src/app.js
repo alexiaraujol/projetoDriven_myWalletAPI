@@ -14,7 +14,7 @@ app.use(authRouter);
 app.use(transactionsRouter);
 
 
-
-app.listen(5000, () => {
-    console.log("Servidor rodando na porta 5000");
+const porta = process.env.PORT || 5000;
+app.listen(porta, () => {
+console.log( `Servidor rodando na porta ${porta}`);
 });
