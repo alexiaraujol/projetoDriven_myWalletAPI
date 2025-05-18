@@ -32,7 +32,7 @@ export async function signUp (req, res)  {
 };
 
 
-export async function singnIn (req, res)  {
+export async function signIn (req, res)  {
 
 
     const usuario = req.body;
