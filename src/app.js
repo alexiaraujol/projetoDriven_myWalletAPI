@@ -8,17 +8,26 @@ import { connectToDatabase } from './config/database.js';
 
 dotenv.config();
 
-const app = express();
-app.use(cors());
-app.use(json());
+async function main() {
+  try {
+    await connectToDatabase();
 
-app.use(authRouter);
-app.use(transactionsRouter);
+    const app = express();
+    app.use(cors());
+    app.use(json());
 
-const port = process.env.PORT || 5000;
+    app.use(authRouter);
+    app.use(transactionsRouter);
 
-connectToDatabase().then(() => {
-	app.listen(port, () => {
-		console.log(`Servidor rodando na porta ${port}`);
-	});
-});
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => {
+      console.log(`Servidor rodando na porta ${port}`);
+    });
+
+  } catch (err) {
+    console.error("Erro ao iniciar o servidor:", err);
+    process.exit(1); 
+  }
+}
+
+main();

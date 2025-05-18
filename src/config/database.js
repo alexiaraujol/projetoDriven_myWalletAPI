@@ -8,14 +8,15 @@ const mongoClient = new MongoClient(mongoURL);
 let db;
 
 async function connectToDatabase() {
-    try {
-        console.log(`Conectando ao MongoDB na URL: ${mongoURL}`);
-        await mongoClient.connect();
-        db = mongoClient.db(); // só define db depois da conexão
-        console.log("MongoDB conectado!!!");
-    } catch (error) {
-        console.error("Erro ao conectar ao MongoDB:", error.message);
-    }
+  try {
+    console.log(`Conectando ao MongoDB na URL: ${mongoURL}`);
+    await mongoClient.connect();
+    db = mongoClient.db();
+    console.log("MongoDB conectado!!!");
+  } catch (error) {
+    console.error("Erro ao conectar ao MongoDB:", error);
+    throw error; 
+  }
 }
 
 function getDb() {
