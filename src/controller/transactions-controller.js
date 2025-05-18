@@ -22,31 +22,42 @@ export async function postTransactions(req, res) {
 }
 
 export async function getTransactions(req, res) {
-
-    const pagina = req.query.pagina || 1;
-    const limite = 10
+    const pagina = parseInt(req.query.pagina) || 1;  // garantir que seja número
+    const limite = 10;
     const inicio = (pagina - 1) * limite;
-
-
-
+  
     try {
-        const transactions = await db.collection("transactions")
+      // Conta total de transações do usuário
+      const total = await db.collection("transactions").countDocuments({ userId: req.userId });
+  
+      if (total === 0) {
+        return res.status(404).send("Transações não encontradas");
+      }
+  
+      // Busca as transações com skip e limit
+      const transactions = await db.collection("transactions")
         .find({ userId: req.userId })
+        .sort({ date: -1 })
         .skip(inicio)
         .limit(limite)
-        .sort({ date: -1 }) // Ordena por data, do mais recente para o mais antigo
         .toArray();
-
-        if (!transactions || transactions.length === 0) {
-            return res.status(404).send("Transações não encontradas");
-        }
-
-        res.status(200).send(transactions);
+  
+      // Calcula total de páginas
+      const totalPaginas = Math.ceil(total / limite);
+  
+      // Responde com dados + info da paginação
+      res.status(200).json({
+        paginaAtual: pagina,
+        totalPaginas,
+        totalTransacoes: total,
+        transacoes: transactions
+      });
     } catch (error) {
-        console.error(error);
-        res.status(500).send("Erro interno do servidor");
+      console.error(error);
+      res.status(500).send("Erro interno do servidor");
     }
-}
+  }
+  
 
 export async function putTransactions(req, res) {
     const { id } = req.params;

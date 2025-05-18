@@ -11,11 +11,12 @@ import { db } from "../config/database.js";
 export async function signUp (req, res)  {
     //pegar as infs do usuario 
     const usuario = req.body;
-    //validar as infs
-
-
-
-    //salvar no banco 
+    const usuarioCadastrado = await db.collection("usuarios").findOne({
+        email: usuario.email
+    });
+    if (usuarioCadastrado) {
+        return res.status(409).send("Usuario ja cadastrado");
+    } 
     try {
         await db.collection("usuarios").insertOne({
             ...usuario,
