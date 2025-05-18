@@ -11,6 +11,7 @@ export async function validarToken(req, res, next) {
     if (!token) return res.sendStatus(401); 
 
     try {
+        console.log("JWT_SECRET usado no middleware:", process.env.JWT_SECRET);
         const decoded = jwt.verify(token, process.env.JWT_SECRET); 
         const usuario = await db.collection("usuarios").findOne({
             _id: new ObjectId(decoded.userId),

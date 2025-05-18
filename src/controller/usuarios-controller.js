@@ -2,14 +2,14 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { db } from "../config/database.js";
 dotenv.config();
 
-import { getDb } from "../config/database.js";
+
 
 export async function signUp(req, res) {
     const usuario = req.body;
-    const db = getDb(); 
-
+    
     const usuarioCadastrado = await db.collection("usuarios").findOne({ email: usuario.email });
     if (usuarioCadastrado) {
         return res.status(409).send("Usuario ja cadastrado");
@@ -29,7 +29,6 @@ export async function signUp(req, res) {
 
 export async function signIn(req, res) {
     const usuario = req.body;
-    const db = getDb(); 
 
     try {
         const usuarioCadastrado = await db.collection("usuarios").findOne({ email: usuario.email });
