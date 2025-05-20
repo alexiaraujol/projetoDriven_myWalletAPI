@@ -6,12 +6,14 @@ dotenv.config();
 const mongoURL = process.env.DATABASE_URL;
 const mongoClient = new MongoClient(mongoURL);
 
-try {
-    await mongoClient.connect();
-    console.log("MongoDB conectado com sucesso!");
-} catch (error) {
-    console.log(error.message)
-    
+async function connectToDatabase() {
+    try {
+        await mongoClient.connect();
+        console.log("MongoDB conectado com sucesso!");
+    } catch (error) {
+        console.error(error.message);
+    }
 }
+connectToDatabase();
 
-export const db = mongoClient.db(); 
+export const db = mongoClient.db();
