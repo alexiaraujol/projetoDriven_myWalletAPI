@@ -12,10 +12,13 @@ export async function validarToken(req, res, next) {
 
     try {
         console.log("JWT_SECRET usado no middleware:", process.env.JWT_SECRET);
+        console.log("Token recebido:", token);
         const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+        console.log("Decoded:", decoded);
         const usuario = await db.collection("usuarios").findOne({
             _id: new ObjectId(decoded.userId),
         });
+        console.log("Usuário encontrado:", usuario);
 
         if (!usuario) return res.sendStatus(401); 
 
